@@ -1,0 +1,407 @@
+// RESET ====================================================================================================
+
+
+html, body{
+  padding:0;
+  margin:0;
+}
+
+// To make every element border-box, and remove margin/padding
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+button{
+  border:0;
+}
+
+*, *:before, *:after{
+  box-sizing:border-box;
+}
+
+
+// MIXINS AND VARIABLES ====================================================================================================
+
+
+// paths
+$path-images: "../assets/images";
+
+// site width: 
+$site-width:900px;
+
+// Breakpoints
+$breakpoints: (
+    small: 560px,
+    tablet: 700px,
+    medium: 960px,
+    large: 1280px,
+    xlarge: 1440px,
+);
+
+// breakpoint mixins
+@mixin break($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media screen and (min-width: map-get($breakpoints, $breakpoint)) {
+            @content;
+        }
+    }
+}
+
+// colors
+$color-primary:gold;
+$color-secondary:red;
+$color-dark-gray:#4B4B4B;
+$black:#555555;
+$white: #ffffff;
+$off-white: #f9f9f9;
+$darken-overlay:rgba(black, .05);
+$white-darken:darken($white, 5);
+$black-lighten:lighten($black, 20);
+
+// lines
+$line: 1px solid $black;
+$line-feint:1px solid $black-lighten;
+
+// Standard greyscale: number = brightness (HSB)
+$gray95: #F2F2F2;
+$gray90: #E6E6E6;
+$gray80: #CCCCCC;
+$gray70: #B3B3B3;
+$gray60: #999999;
+$gray50: #808080;
+$gray40: #666666;
+$gray30: #4D4D4D;
+$gray20: #333333;
+$gray15: #262626;
+
+// Social colors
+$dribbble: #EA4C89;
+$facebook: #3B5999;
+$flickr: #FF0084;
+$googleplus: #DD4B39;
+$instagram: #E4405F;
+$linkedin: #0077B5;
+$pinterest: #BD081C;
+$snapchat: #FFFC00;
+$soundcloud: #ff3300;
+$tumblr: #34465D;
+$twitter: #55ACEE;
+$vimeo: #1AB7EA;
+$whatsapp: #25D366;
+$youtube: #CD201F;
+
+// font loading
+//@import url();
+
+
+
+
+// ANIMATION ====================================================================================================
+
+// fancy transitions
+$move-whip: cubic-bezier(0.8, 0, 0.3, 1);
+$move-snap: cubic-bezier(0.7, -0.5, 0.3, 1.5);
+$move-snap-in: cubic-bezier(0.6, -0.3, 0.7, 0);
+$move-snap-out: cubic-bezier(0.2, 0.9, 0.3, 1.3);
+
+@mixin transition($property, $speed, $anim: linear ){
+  transition-property: $property;
+  transition-duration: $speed;
+  transition-timing-function: $anim;
+}
+
+// anchor
+a{
+  @include transition(color, .5s);
+}
+
+
+// TYPOGRAPHY ====================================================================================================
+
+// fonts
+$font-brand:sans-serif;
+$font-std:sans-serif;
+$font-display:sans-serif;
+
+// font-size;
+$font-size-base:62.5%;
+$font-size-std:1.8rem;
+
+// font weights
+$thin:400;
+$std:400;
+$bold:500;
+$extrabold:500;
+
+// font margins
+$margin-std:1.5rem;
+
+// line height
+$line-height:1.7;
+
+// underline
+@mixin text-underline($color){
+    text-decoration: underline;
+    text-decoration-skip-ink: auto;
+    text-decoration-color: $color;
+}
+
+// text display
+@mixin text-display($font-size){
+  font-family:$font-display;
+  font-weight:$bold;
+  font-size:$font-size;
+  line-height: 1.4;
+  p{
+    line-height: 1.4;
+  }
+}
+
+@mixin text-leadin($font-size){
+  font-family:$font-display;
+  font-weight:$std;
+  font-size:$font-size;
+  line-height: 1.4;
+  p{
+    line-height: 1.4;
+  }
+}
+
+@mixin text-tiny{
+    color:$black-lighten;
+    font-size:.8em;
+}
+
+// text body
+@mixin text-body{
+  font-family:$font-std;
+  line-height:$line-height;
+  strong{
+    font-weight:$bold;
+  }
+  h1, h2, h3, h4, h5{
+    @include text-display(1.4em);
+    color:$black;
+    padding:0;
+    margin:0;
+    margin-bottom:$margin-std;
+    font-weight:$bold;
+  }
+  p, ol, ul{
+    padding:0;
+    margin:0;
+    margin-bottom:$margin-std;
+  }
+  ul{
+    padding-left:1em;
+    box-sizing:border-box;
+  }
+  li{
+    width:calc(100% - 1em);
+    list-style:none;
+    position:relative;
+    &:before{
+      content:'\25A0';
+      color:$color-secondary;
+      margin-right:.5em;
+    }
+  }
+  & > *:last-child{
+    margin-bottom:0;
+    padding-bottom:0;
+  }
+}
+
+// link color
+$link-color:$black;
+
+// text shadow
+$text-shadow-std: 1px 1px 2px $black;
+
+// raised item shadow
+$shadow:3px 3px 3px rgba(93, 93, 93, 0.1);
+
+// borders
+
+$border-feint: rgba($black, 0.2) solid 1px;
+$border-accent: $color-secondary solid 2px;
+$border-accent-feint: rgba($color-secondary, 0.2) solid 1px;
+
+
+// LAYOUT AND GRID ====================================================================================================
+
+// layout settings
+
+$site-width:1400px;
+$padding-sides:5vw;
+
+@mixin panel{
+  width:100vw;
+  background-color:$gray80;
+}
+
+@mixin container{
+  background-color:$gray90;
+  width:100vw;
+  margin:0 auto;
+  max-width:$site-width;
+  padding:0 $padding-sides;
+}
+
+
+.panel{
+  @include panel;
+}
+
+.container{
+  @include container;
+}
+
+
+
+
+@mixin col-std($width){
+  width:100%;
+  @include break(small){
+    width:$width;
+    margin-left:25%;
+  }
+}
+
+// header
+$header-height:80px;
+
+// margin on mobile
+$textmarginmobile:4rem;
+
+// Aspect ratios
+$aspect_1-1: 100%;
+$aspect_16-9: 56.25%;
+$aspect_4-3: 75%;
+$aspect_3-2: 66.66%;
+$aspect_8-5: 62.5%;
+
+// syled links
+@mixin link-styled{
+  @include text-underline($color-secondary);
+  font-weight:$bold;
+}
+
+
+
+// Align
+@mixin align-left{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+}
+@mixin align-left-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
+}
+@mixin align-left-bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-start;
+}
+
+@mixin align-center{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+@mixin align-center-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+}
+@mixin align-center-bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+}
+
+@mixin align-right{
+    display:flex;
+    align-items:center;
+    justify-conten:flex-end;
+}
+@mixin align-right-top{
+    display:flex;
+    align-items:flex-start;
+    justify-conten:flex-start;
+}
+@mixin align-right-bottom{
+    display:flex;
+    align-items:flex-start;
+    justify-conten:flex-end;
+}
+
+
+// GLOBAL ELEMENTS AND CLASSES =====================================================================================
+
+// html
+html {
+  font-family: $font-brand;
+  font-size:$font-size-base;
+}
+
+// body
+body {
+  font-size:$font-size-std;
+  line-height:$line-height;
+  color:$black;
+}
+
+// resets
+input, textarea, select, button{
+  font-size:inherit;
+}
+
+// resets
+p, ul, ol{
+  padding:0;
+  margin:0;
+  line-height:$line-height;
+  list-style:none;
+}
+
+// anchor
+a{
+  font-weight:$bold;
+  text-decoration: none;
+  color:inherit;
+}
+
+// headings
+h1, h2, h3, h4, h5{
+  font-size:$font-size-std;
+  font-weight:$std;
+  margin:0;
+  padding:0;
+}
+
+// screen reader only
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+// text no break
+.nobreak{
+  white-space: nowrap;
+}
+
+// 
