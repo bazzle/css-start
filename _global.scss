@@ -4,6 +4,7 @@
 html, body{
   padding:0;
   margin:0;
+  overflow-x:hidden;
 }
 
 // To make every element border-box, and remove margin/padding
@@ -24,6 +25,18 @@ button{
   box-sizing:border-box;
 }
 
+svg{
+  fill:currentColor;
+}
+
+img{
+  margin:0;
+  padding:0;
+  display:block;
+  max-width:100%;
+  height:auto;
+}
+
 
 // MIXINS AND VARIABLES ====================================================================================================
 
@@ -31,8 +44,11 @@ button{
 // paths
 $path-images: "../assets/images";
 
-// site width: 
-$site-width:900px;
+// layout
+$site-width:1400px;
+$padding-sides:5vw;
+// standard margin
+$margin-std:1.5rem;
 
 // Breakpoints
 $breakpoints: (
@@ -52,21 +68,6 @@ $breakpoints: (
     }
 }
 
-// colors
-$color-primary:gold;
-$color-secondary:red;
-$color-dark-gray:#4B4B4B;
-$black:#555555;
-$white: #ffffff;
-$off-white: #f9f9f9;
-$darken-overlay:rgba(black, .05);
-$white-darken:darken($white, 5);
-$black-lighten:lighten($black, 20);
-
-// lines
-$line: 1px solid $black;
-$line-feint:1px solid $black-lighten;
-
 // Standard greyscale: number = brightness (HSB)
 $gray95: #F2F2F2;
 $gray90: #E6E6E6;
@@ -77,7 +78,7 @@ $gray50: #808080;
 $gray40: #666666;
 $gray30: #4D4D4D;
 $gray20: #333333;
-$gray15: #262626;
+$gray10: #262626;
 
 // Social colors
 $dribbble: #EA4C89;
@@ -95,6 +96,24 @@ $vimeo: #1AB7EA;
 $whatsapp: #25D366;
 $youtube: #CD201F;
 
+// colors
+$color-dark-gray:#4B4B4B;
+$black:#000000;
+$white: #ffffff;
+$off-white: #f9f9f9;
+$darken-overlay:rgba(black, .05);
+$white-darken:darken($white, 5);
+$black-lighten:lighten($black, 20);
+
+// project specific colors
+$color-primary:$gray40;
+$color-secondary:$gray60;
+$color-accent:gold;
+
+// lines
+$line: 1px solid $black;
+$line-feint:1px solid $black-lighten;
+
 // font loading
 //@import url();
 
@@ -109,7 +128,7 @@ $move-snap: cubic-bezier(0.7, -0.5, 0.3, 1.5);
 $move-snap-in: cubic-bezier(0.6, -0.3, 0.7, 0);
 $move-snap-out: cubic-bezier(0.2, 0.9, 0.3, 1.3);
 
-@mixin transition($property, $speed, $anim: linear ){
+@mixin transition($property, $speed: .2s, $anim: linear ){
   transition-property: $property;
   transition-duration: $speed;
   transition-timing-function: $anim;
@@ -130,19 +149,41 @@ $font-display:sans-serif;
 
 // font-size;
 $font-size-base:62.5%;
+$font-size-mobile:1.6rem;
 $font-size-std:1.8rem;
 
 // font weights
 $thin:400;
 $std:400;
-$bold:500;
-$extrabold:500;
+$bold:600;
+$extrabold:600;
 
-// font margins
-$margin-std:1.5rem;
+// font sizes
+$tiny:.8em;
+
+// text margins
+$text-gap:4rem;
+$text-gap-mobile:2rem;
+$text-gap-deep:6rem;
+$text-gap-tight:2rem;
+
+%text-gap{
+  margin-bottom:$text-gap-mobile;
+  @include break(small) {
+    margin-bottom:$text-gap;
+  }
+}
+
+%text-gap-tight{
+  margin-bottom:$text-gap-mobile;
+  @include break(small) {
+    margin-bottom:$text-gap-tight;
+  }
+}
 
 // line height
 $line-height:1.7;
+$line-height--tight:1;
 
 // underline
 @mixin text-underline($color){
@@ -162,6 +203,34 @@ $line-height:1.7;
   }
 }
 
+// titles
+$titlelevels: (
+  s1:6rem,
+  s2:3rem,
+  s3:2rem,
+);
+
+@mixin title-display{
+    font-size:4rem;
+    font-weight:$bold;
+    @include break(small) {
+      font-size:6rem;
+    }
+    @include break(medium) {
+      font-size:8rem;
+    }
+}
+
+@mixin title($titlelevel){
+  font-weight:$bold;
+  @if map-has-key($titlelevels, $titlelevel) {
+    font-size:map-get($titlelevels, $titlelevel);
+    @include break(small) {
+      font-size:calc(#{map-get($titlelevels, $titlelevel)} + 50%);
+    }
+  }
+}
+
 @mixin text-leadin($font-size){
   font-family:$font-display;
   font-weight:$std;
@@ -173,29 +242,33 @@ $line-height:1.7;
 }
 
 @mixin text-tiny{
-    color:$black-lighten;
-    font-size:.8em;
+    font-size:$tiny;
 }
 
 // text body
-@mixin text-body{
+%text-body{
   font-family:$font-std;
   line-height:$line-height;
   strong{
     font-weight:$bold;
   }
   h1, h2, h3, h4, h5{
-    @include text-display(1.4em);
     color:$black;
     padding:0;
     margin:0;
-    margin-bottom:$margin-std;
+    margin-bottom:$text-gap;
     font-weight:$bold;
+  }
+  h2{
+    @include title(s2);
+  }
+  h3{
+    @include title(s3);
   }
   p, ol, ul{
     padding:0;
     margin:0;
-    margin-bottom:$margin-std;
+    margin-bottom:$text-gap;
   }
   ul{
     padding-left:1em;
@@ -235,10 +308,6 @@ $border-accent-feint: rgba($color-secondary, 0.2) solid 1px;
 
 // LAYOUT AND GRID ====================================================================================================
 
-// layout settings
-
-$site-width:1400px;
-$padding-sides:5vw;
 
 @mixin panel{
   width:100vw;
@@ -246,7 +315,6 @@ $padding-sides:5vw;
 }
 
 @mixin container{
-  background-color:$gray90;
   width:100vw;
   margin:0 auto;
   max-width:$site-width;
@@ -262,22 +330,61 @@ $padding-sides:5vw;
   @include container;
 }
 
+// simple grid layouts
 
-
-
-@mixin col-std($width){
-  width:100%;
-  @include break(small){
-    width:$width;
-    margin-left:25%;
+@mixin grid($howmanycols: 2/3, $gap: 1.5rem, $break: medium) {
+  @include break($break) {
+    display: grid;
+    grid-auto-rows: auto;
+    grid-gap: $gap;
+    @if $howmanycols == 2 {
+      grid-template-columns: 1fr 1fr;
+    } @else if $howmanycols == 3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    } @else if $howmanycols == 4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    } @else if $howmanycols == 1-3 {
+      grid-template-columns: 1fr 2fr;
+    } @else if $howmanycols == 2-3 {
+      grid-template-columns: 2fr 1fr;
+    } @else if $howmanycols == 1-4 {
+      grid-template-columns: 1fr 3fr;
+    } @else if $howmanycols == 3-4 {
+      grid-template-columns: 3fr 1fr;
+    }
   }
 }
 
+// grid classes
+
+.grid{
+  &--2{
+    @include grid(2, 3rem);
+  }
+  &--1-2{
+    @include grid(1-2, 3rem);
+  }
+  &--3{
+    @include grid(3, 3rem);
+  }
+}
+
+.grid-tight{
+  &--2{
+    @include grid(2, 1.5rem);
+  }
+  &--1-2{
+    @include grid(1-2, 1.5rem);
+  }
+  &--3{
+    @include grid(3, 1.5rem);
+  }
+}
+
+
 // header
 $header-height:80px;
-
-// margin on mobile
-$textmarginmobile:4rem;
+$header-height-mobile:80px;
 
 // Aspect ratios
 $aspect_1-1: 100%;
@@ -296,51 +403,55 @@ $aspect_8-5: 62.5%;
 
 // Align
 @mixin align-left{
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
 }
 @mixin align-left-top{
-    display:flex;
-    align-items:flex-start;
-    justify-content:flex-start;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
 }
 @mixin align-left-bottom{
-    display:flex;
-    align-items:flex-end;
-    justify-content:flex-start;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-start;
 }
-
 @mixin align-center{
     display:flex;
     align-items:center;
     justify-content:center;
 }
-@mixin align-center-top{
+@mixin align-center--baseline{
     display:flex;
-    align-items:flex-start;
+    align-items:baseline;
     justify-content:center;
 }
+@mixin align-center-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
 @mixin align-center-bottom{
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
 }
 
 @mixin align-right{
-    display:flex;
-    align-items:center;
-    justify-conten:flex-end;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
 }
 @mixin align-right-top{
-    display:flex;
-    align-items:flex-start;
-    justify-conten:flex-start;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
 }
 @mixin align-right-bottom{
-    display:flex;
-    align-items:flex-start;
-    justify-conten:flex-end;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-end;
 }
 
 
@@ -354,9 +465,30 @@ html {
 
 // body
 body {
-  font-size:$font-size-std;
+  font-size:$font-size-mobile;
+  @include break(small) {
+    font-size:$font-size-std;
+  }
   line-height:$line-height;
   color:$black;
+}
+
+// header
+.header{
+  position:fixed;
+  height:$header-height-mobile;
+  @include break(small) {
+      height:$header-height;
+  }
+}
+
+// main
+.main{
+  position:relative;
+  padding-top:$header-height-mobile;
+  @include break(small) {
+      padding-top:$header-height;
+  }
 }
 
 // resets
@@ -374,17 +506,28 @@ p, ul, ol{
 
 // anchor
 a{
-  font-weight:$bold;
   text-decoration: none;
   color:inherit;
+}
+
+// text highlight
+::selection {
+  background:$color-accent;
 }
 
 // headings
 h1, h2, h3, h4, h5{
   font-size:$font-size-std;
   font-weight:$std;
+  line-height:$line-height--tight;
   margin:0;
   padding:0;
+}
+
+// icons
+.icon{
+  use{
+  }
 }
 
 // screen reader only
